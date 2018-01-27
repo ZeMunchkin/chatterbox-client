@@ -27,6 +27,10 @@ var app = {
   
   server: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
   currUser: window.location.search.split("=")[1],
+  filterRooms: false,
+  currRoom: null,
+  allRooms: [],
+  
 
   init: function() {
     this.fetch();
@@ -69,7 +73,7 @@ var app = {
       // This is the url you should use to communicate with the parse API server.
       url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
       type: 'GET',
-      data: 'order=-createdAt&limit=5',
+      data: 'order=-createdAt&limit=100',
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: fetch', data);
@@ -91,20 +95,39 @@ var app = {
   },
   
   renderMessage: function (message) {
-    var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
-      <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
-      <div class='text'>${_.escape(message.text)}</div>
-      <div class='time' data-time="${message.createdAt}">${message.createdAt}</div>
-      </div>`;
-    $('#chats').append(tweet);
+    var messageRoom = _.escape(message.roomname);
+    console.log(messageRoom, app.filterRooms, app.currRoom);
+    if (!app.allRooms.includes(messageRoom)) {
+      app.allRooms.push(messageRoom);
+      app.addRoom(messageRoom);
+    }
+    
+    if (app.filterRooms && app.currRoom === messageRoom) {
+      var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+        <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
+        <div class='text'>${_.escape(message.text)}</div>
+        <div class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</div>
+        </div>`;
+      $('#chats').append(tweet);
+      
+    } else if (!app.filterRooms || app.currRoom === 'Lobby') {
+        var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+        <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
+        <div class='text'>${_.escape(message.text)}</div>
+        <div class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</div>
+        </div>`;
+      $('#chats').append(tweet);
+    }
   },
   
   clearMessages: function () {
     $('#chats').children().remove();
   },
   
-  renderRoom: function () {
-    
+  renderRoom: function (roomName) {
+    app.filterRooms = true;
+    app.currRoom = roomName;
+    app.fetch();
   },
   
   handleUsernameClick: function (tgtUserName) {
@@ -127,7 +150,7 @@ var app = {
     } else {
       FriendsList.push(tgtUserName);
     }
-    console.log('myFriends', FriendsList);
+    //console.log('myFriends', FriendsList);
   },
 
   _renderFriendsList: function(tgtUserName) {
@@ -139,11 +162,14 @@ var app = {
   },
   
   handleSubmit: function() {
-    var msg = new Message(app.currUser, _.escape($('#message').val()));
+    var msg = new Message(app.currUser, _.escape($('#message').val()), app.currRoom);
     app.send(msg);
     $('#message').val('');    
   },
   
+  addRoom: function (roomName) {
+    $('#roomSelect').append(`<option id="${roomName}">${roomName}</option>`);
+  },
   
 };
 
@@ -164,6 +190,25 @@ $(document).ready( function () {
   <button id="send" class="submit">GO!!!</button>`);
 
   $('#currUser').append(' ', app.currUser);
+  
+  $('#roomContainer').append(`<select id="roomSelect">
+      <option id="createRoom">Create New Room</option>
+      <option id="default" Selected>Lobby</option>
+    </select>
+    <button id=roomSubmit>GO!</button>
+    <input class="roomInput">
+    <button class="roomInput">GO!</button>`);
+  
+  $(document).on('click', '#roomSubmit', function (evt) {
+    console.log('handled');
+    if ($('#roomSelect').val() === $('#createRoom').text()) {
+      $('.roomInput').toggle('display');
+    }
+    
+    var selectedRoom = _.escape($('#roomSelect').val());
+    app.renderRoom(selectedRoom);
+    
+  });
 
   app.init();
 
