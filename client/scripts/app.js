@@ -26,6 +26,7 @@
 var app = {
   
   server: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
+  currUser: window.location.search.split("=")[1],
 
   init: function() {
     this.fetch();
@@ -68,13 +69,18 @@ var app = {
       // This is the url you should use to communicate with the parse API server.
       url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
       type: 'GET',
-      data: 'order=-createdAt&limit=100',
+      data: 'order=-createdAt&limit=5',
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: fetch', data);
+        app.clearMessages();  
         data.results.forEach(function (message) {
           app.renderMessage(message);
-        })
+        });
+        FriendsList.forEach(function(friend) {
+          // app.handleUsernameClick(friend);
+          app._renderFriendsList(friend);
+        });
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -105,11 +111,37 @@ var app = {
     
     // console.log('got clicked!', tgtUserName);
     console.log(tgtUserName);
+    // $('.tweet').each(function(index, element) {
+    //   if ($(this).data('username') === tgtUserName) {
+    //     $(this).toggleClass('friend');
+    //   }
+    // });
+    app._renderFriendsList(tgtUserName);
+    
+    if (FriendsList.includes(tgtUserName)) {
+      for (var i = 0; i < FriendsList.length; i++) {
+        if (FriendsList[i] === tgtUserName) {
+          FriendsList.splice(i, 1);
+        }
+      }
+    } else {
+      FriendsList.push(tgtUserName);
+    }
+    console.log('myFriends', FriendsList);
+  },
+
+  _renderFriendsList: function(tgtUserName) {
     $('.tweet').each(function(index, element) {
       if ($(this).data('username') === tgtUserName) {
         $(this).toggleClass('friend');
       }
-    });
+    });    
+  },
+  
+  handleSubmit: function() {
+    var msg = new Message(app.currUser, _.escape($('#message').val()));
+    app.send(msg);
+    $('#message').val('');    
   },
   
   
@@ -119,21 +151,34 @@ var app = {
 var Message = function(username, text, roomname) {
   this.username = _.escape(username);
   this.text = _.escape(text);
-  this.roomname = _.escape(roomname);
+  this.roomname = _.escape(roomname) || 'lobby';
 };
+
+var FriendsList = [];
 
 
 $(document).ready( function () {
-  app.init();
   
-  var currUser = window.location.search.split("=")[1];
-  // console.log('user is', currUser);
-  $('#currUser').append(' ', currUser);
+  
+  $('#textBox').append(`<input id="message" type="text" autofocus placeholder="Enter message...">
+  <button id="send" class="submit">GO!!!</button>`);
+
+  $('#currUser').append(' ', app.currUser);
+
+  app.init();
 
   $(document).on('click', '.username', function(evt) {
     // console.log('got clicked!');
     var tgtUserName = $(this).closest('.username').data('username');
-    app.handleUsernameClick(tgtUserName);
-
+    app.handleUsernameClick(_.escape(tgtUserName));
+  });
+  
+  // $(document).submit('#send', function(evt) {
+  //   console.log('submit');
+  // });
+  
+  $(document).on('click', '#send', function(evt) {
+    console.log('clicked');
+    app.handleSubmit();  
   });
 });
