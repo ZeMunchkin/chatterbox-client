@@ -32,25 +32,5 @@
       <div id="currUser"><i class="fa fa-user-circle-o" aria-hidden="true"></i></div>
     </div>
     <div id="chats"></div>
-    <script>
-      $(document).ready( function () {
-        app.init();
-        
-        var currUser = window.location.search.split("=")[1];
-        // console.log('user is', currUser);
-        $('#currUser').append(' ', currUser);
-
-        $(document).on('click', '.username', function(evt) {
-          // console.log('got clicked!');
-          var tgtUserName = $(this).closest('.username').data('username');
-          // console.log('got clicked!', tgtUserName);
-          $('.tweet').each(function(index, element) {
-            if ($(this).data('username') === tgtUserName) {
-              $(this).toggleClass('friend');
-            }
-          });
-        });
-      });
-    </script>
   </body>
 </html>

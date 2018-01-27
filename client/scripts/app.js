@@ -73,13 +73,8 @@ var app = {
       success: function (data) {
         console.log('chatterbox: fetch', data);
         data.results.forEach(function (message) {
-          var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
-          <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
-          <div class='text'>${_.escape(message.text)}</div>
-          <div class='time' data-time="${message.createdAt}">${message.createdAt}</div>
-          </div>`;
-          $('#chats').append(tweet);
-        });
+          app.renderMessage(message);
+        })
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -88,6 +83,35 @@ var app = {
     });
     
   },
+  
+  renderMessage: function (message) {
+    var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+      <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
+      <div class='text'>${_.escape(message.text)}</div>
+      <div class='time' data-time="${message.createdAt}">${message.createdAt}</div>
+      </div>`;
+    $('#chats').append(tweet);
+  },
+  
+  clearMessages: function () {
+    $('#chats').children().remove();
+  },
+  
+  renderRoom: function () {
+    
+  },
+  
+  handleUsernameClick: function (tgtUserName) {
+    
+    // console.log('got clicked!', tgtUserName);
+    console.log(tgtUserName);
+    $('.tweet').each(function(index, element) {
+      if ($(this).data('username') === tgtUserName) {
+        $(this).toggleClass('friend');
+      }
+    });
+  },
+  
   
 };
 
@@ -98,3 +122,18 @@ var Message = function(username, text, roomname) {
   this.roomname = _.escape(roomname);
 };
 
+
+$(document).ready( function () {
+  app.init();
+  
+  var currUser = window.location.search.split("=")[1];
+  // console.log('user is', currUser);
+  $('#currUser').append(' ', currUser);
+
+  $(document).on('click', '.username', function(evt) {
+    // console.log('got clicked!');
+    var tgtUserName = $(this).closest('.username').data('username');
+    app.handleUsernameClick(tgtUserName);
+
+  });
+});
