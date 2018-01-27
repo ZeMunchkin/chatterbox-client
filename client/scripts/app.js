@@ -28,7 +28,7 @@ var app = {
   server: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
   currUser: window.location.search.split("=")[1],
   filterRooms: false,
-  currRoom: null,
+  currRoom: 'All Messages',
   allRooms: [],
   
 
@@ -97,25 +97,37 @@ var app = {
   renderMessage: function (message) {
     var messageRoom = _.escape(message.roomname);
     console.log(messageRoom, app.filterRooms, app.currRoom);
-    if (!app.allRooms.includes(messageRoom)) {
-      app.allRooms.push(messageRoom);
-      app.addRoom(messageRoom);
-    }
     
+    app.addRoom(messageRoom);
+    message.username = message.username || "(Anonymous Mouse)";
+    message.roomname = message.roomname || "All Messages";
+    var messageclasses = message.username === app.currUser ? "text ownmessage" : "text";
+    
+    // if(message.username === app.currUser && ) {
+    //   var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+    //     <span class='text'>${_.escape(message.text)}</span>
+    //     </div>`;
+    //   $('#chats').append(tweet);
+    var totalMessage = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">`;
+    var roomSpan = `<span class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</span>`;
+    var userSpan = `<span class='username' data-username="${_.escape(message.username)}">@${_.escape(message.username)}: </span>`;
+    var messageSpan =`<span class='${messageclasses}'>${_.escape(message.text)}</span>`;
+    var messageClose = `</div>`;
+      
     if (app.filterRooms && app.currRoom === messageRoom) {
-      var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
-        <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
-        <div class='text'>${_.escape(message.text)}</div>
-        <div class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</div>
-        </div>`;
+      //no room info
+      if (message.username === app.currUser) {
+        userSpan = '';
+      }
+      var tweet = totalMessage + userSpan + messageSpan + messageClose;
       $('#chats').append(tweet);
       
-    } else if (!app.filterRooms || app.currRoom === 'Lobby') {
-        var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
-        <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
-        <div class='text'>${_.escape(message.text)}</div>
-        <div class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</div>
-        </div>`;
+    } else if (!app.filterRooms || app.currRoom === 'All Messages') {
+      if (message.username === app.currUser) {
+        userSpan = ''; 
+      }
+      //all info
+      var tweet = totalMessage + roomSpan + userSpan + messageSpan + messageClose;
       $('#chats').append(tweet);
     }
   },
@@ -127,6 +139,11 @@ var app = {
   renderRoom: function (roomName) {
     app.filterRooms = true;
     app.currRoom = roomName;
+    if (app.currRoom !== 'All Messages') {
+      $('.currentRoom').text(app.currRoom);
+    } else {
+      $('.currentRoom').text('');
+    }
     app.fetch();
   },
   
@@ -168,10 +185,16 @@ var app = {
   },
   
   addRoom: function (roomName) {
-    $('#roomSelect').append(`<option id="${roomName}">${roomName}</option>`);
+    if (!app.allRooms.includes(roomName)) {
+      app.allRooms.push(roomName);
+      $('#roomSelect').append(`<option id="${roomName}">${roomName}</option>`);
+    }
   },
   
 };
+
+
+
 
 
 var Message = function(username, text, roomname) {
@@ -183,6 +206,11 @@ var Message = function(username, text, roomname) {
 var FriendsList = [];
 
 
+
+
+
+
+
 $(document).ready( function () {
   
   
@@ -191,13 +219,14 @@ $(document).ready( function () {
 
   $('#currUser').append(' ', app.currUser);
   
-  $('#roomContainer').append(`<select id="roomSelect">
+  $('#roomContainer').append(`
+    <select id="roomSelect">
       <option id="createRoom">Create New Room</option>
-      <option id="default" Selected>Lobby</option>
+      <option id="default" Selected>All Messages</option>
     </select>
     <button id=roomSubmit>GO!</button>
-    <input class="roomInput">
-    <button class="roomInput">GO!</button>`);
+    <input id="roomInputText" class="roomInput" placeholder="Enter Room Name">
+    <button id="roomInputButton" class="roomInput">GO!</button>`);
   
   $(document).on('click', '#roomSubmit', function (evt) {
     console.log('handled');
@@ -206,8 +235,17 @@ $(document).ready( function () {
     }
     
     var selectedRoom = _.escape($('#roomSelect').val());
-    app.renderRoom(selectedRoom);
-    
+    if(selectedRoom !== 'Create New Room') {
+      app.renderRoom(selectedRoom);
+    }
+  });
+  
+  $(document).on('click', '#roomInputButton', function (evt) {
+    var newRoom = $('#roomInputText').val();
+    app.addRoom(newRoom);
+    app.renderRoom(newRoom);
+    $('.roomInput').toggle('display');
+    $('#roomInputText').val('');
   });
 
   app.init();
