@@ -20,10 +20,12 @@ body {
     font-size: 35px;
     margin-bottom: 5px;
     padding: 5px;
+    font-family: 'Limelight', cursive;
 }
 
 #main h1 span {
     font-style:italic;
+
 }
 
 #main ul {

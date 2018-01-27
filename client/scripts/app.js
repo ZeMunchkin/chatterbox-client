@@ -30,6 +30,9 @@ var app = {
   err: undefined,
 
   init: function() {
+    this.fetch();
+    
+    setInterval(this.fetch.bind(this), 1000);
     
   },
 
@@ -58,17 +61,17 @@ var app = {
       // This is the url you should use to communicate with the parse API server.
       url: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
       type: 'GET',
-      // data: message,
+      data: 'order=-createdAt&limit=100',
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: fetch', data);
         data.results.forEach(function (message) {
           var tweet = `<div class='tweet'>
-            <div class='username'>${message.username}</div>
-            <div class='text'>${message.text}</div>
+            <div class='username'>${_.escape(message.username)}</div>
+            <div class='text'>${_.escape(message.text)}</div>
             <div class='time'>${message.createdAt}</div>
             </div>`;
-          $('#chats').prepend(tweet);
+          $('#chats').append(tweet);
         });
       },
       error: function (data) {
@@ -83,8 +86,8 @@ var app = {
 
 
 var Message = function(username, text, roomname) {
-  this.username = username;
-  this.text = text;
-  this.roomname = roomname;
+  this.username = _.escape(username);
+  this.text = _.escape(text);
+  this.roomname = _.escape(roomname);
 };
 
