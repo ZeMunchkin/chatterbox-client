@@ -62,6 +62,14 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: fetch', data);
+        data.results.forEach(function (message) {
+          var tweet = `<div class='tweet'>
+            <div class='username'>${message.username}</div>
+            <div class='text'>${message.text}</div>
+            <div class='time'>${message.createdAt}</div>
+            </div>`;
+          $('#chats').prepend(tweet);
+        });
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error

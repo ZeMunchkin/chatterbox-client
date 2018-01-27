@@ -6,7 +6,7 @@ body {
 }
 
 #main, #chats {
-    width: 500px;
+    width: 750px;
     margin: auto;
     text-align: left;
     background: white;
@@ -88,3 +88,38 @@ form input[type=text] {
     background-color: #0090da;
 }
 
+.tweet {
+  background-color: #FFF;
+  margin: 20px auto;
+  border-radius: 10px;
+  list-style: none;
+  width: 600px;
+}
+/*
+ul {
+  margin: 35px;
+  padding: 0px;
+}*/
+
+.username {
+  margin: 0px 0px;
+  padding: 10px;
+  font-size: large;
+  font-weight: bold;
+  background-color: #EEE;
+  border-radius: 10px 10px 0px 0px;
+}
+
+.text {
+  margin: 10px 0px 5px 20px;
+  padding: 10px 0px 10px 0px;
+}
+
+.time {
+  color: #AAA;
+  margin: 5px 15px 0px 0px;
+  padding: 0px 0px 5px 0px;
+  text-align: right;
+  font-style: italic;
+  font-size: small;
+}
