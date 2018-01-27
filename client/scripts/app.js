@@ -26,8 +26,6 @@
 var app = {
   
   server: 'http://parse.sfs.hackreactor.com/chatterbox/classes/messages',
-  
-  err: undefined,
 
   init: function() {
     this.fetch();
@@ -55,6 +53,15 @@ var app = {
       }
     });
   },
+
+  // _generateChatline: function(message) {
+  //   var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+  //     <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
+  //     <div class='text'>${_.escape(message.text)}</div>
+  //     <div class='time' data-time="${message.createdAt}">${message.createdAt}</div>
+  //     </div>`;
+  //   $('#chats').append(tweet);
+  // },
   
   fetch: function() {
     $.ajax({
@@ -66,11 +73,11 @@ var app = {
       success: function (data) {
         console.log('chatterbox: fetch', data);
         data.results.forEach(function (message) {
-          var tweet = `<div class='tweet'>
-            <div class='username'>${_.escape(message.username)}</div>
-            <div class='text'>${_.escape(message.text)}</div>
-            <div class='time'>${message.createdAt}</div>
-            </div>`;
+          var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
+          <div class='username' data-username="${_.escape(message.username)}">${_.escape(message.username)}</div>
+          <div class='text'>${_.escape(message.text)}</div>
+          <div class='time' data-time="${message.createdAt}">${message.createdAt}</div>
+          </div>`;
           $('#chats').append(tweet);
         });
       },

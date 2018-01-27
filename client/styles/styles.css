@@ -85,11 +85,11 @@ form input[type=text] {
     padding: 10px;
 }
 
-.friend {
+/*.friend {
     color: #fff;
     background-color: #0090da;
 }
-
+*/
 .tweet {
   background-color: #FFF;
   margin: 20px auto;
@@ -102,6 +102,10 @@ ul {
   margin: 35px;
   padding: 0px;
 }*/
+
+.friend .text {
+    font-weight: 900;
+}
 
 .username {
   margin: 0px 0px;
