@@ -15,6 +15,7 @@ body {
     border-width: 0 1px 1px 1px;
 }
 
+
 #main h1 {
     margin-top: 0;
     font-size: 35px;
@@ -91,11 +92,12 @@ form input[type=text] {
 }
 */
 .tweet {
-  background-color: #FFF;
+  background-color: #EEE;
   margin: 20px auto;
   border-radius: 10px;
   list-style: none;
   width: 600px;
+  padding: 5px;
 }
 /*
 ul {
@@ -107,25 +109,34 @@ ul {
     font-weight: 900;
 }
 
-.username {
-  margin: 0px 0px;
-  padding: 10px;
-  font-size: large;
-  font-weight: bold;
-  background-color: #EEE;
-  border-radius: 10px 10px 0px 0px;
-}
 
-.ownmessage {
-  background-color: #00F;
-  width: 725px;
-  text-align: right;
+.room {
+  padding: 2px;
+  font-size: small;
+  font-weight: bold;
 }
 
 .text {
-  margin: 10px 0px 5px 20px;
+  margin: 10px 20px 5px 20px;
+  font-size: large;
   padding: 10px 0px 10px 0px;
 }
+
+.username {
+  margin: 0px 0px;
+  padding: 2px;
+  font-size: small;
+  font-weight: bold;
+}
+.ownmessage {
+  background-color: #7bb7ff;
+  width: 600px;
+  margin-left:80 px;
+  padding-right: 5px;
+  text-align: right;
+  border-radius: 10px;
+}
+
 
 .time {
   color: #AAA;

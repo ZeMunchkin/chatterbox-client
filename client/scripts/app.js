@@ -101,23 +101,24 @@ var app = {
     app.addRoom(messageRoom);
     message.username = message.username || "(Anonymous Mouse)";
     message.roomname = message.roomname || "All Messages";
-    var messageclasses = message.username === app.currUser ? "text ownmessage" : "text";
+    var messageclasses = message.username === app.currUser ? "tweet ownmessage" : "tweet";
     
     // if(message.username === app.currUser && ) {
     //   var tweet = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">
     //     <span class='text'>${_.escape(message.text)}</span>
     //     </div>`;
     //   $('#chats').append(tweet);
-    var totalMessage = `<div class='tweet' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">`;
+    var totalMessage = `<div class='${messageclasses}' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">`;
     var roomSpan = `<span class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</span>`;
     var userSpan = `<span class='username' data-username="${_.escape(message.username)}">@${_.escape(message.username)}: </span>`;
-    var messageSpan =`<span class='${messageclasses}'>${_.escape(message.text)}</span>`;
+    var messageSpan =`<div class='text'>${_.escape(message.text)}</div>`;
     var messageClose = `</div>`;
       
     if (app.filterRooms && app.currRoom === messageRoom) {
       //no room info
       if (message.username === app.currUser) {
         userSpan = '';
+        roomSpan = '';
       }
       var tweet = totalMessage + userSpan + messageSpan + messageClose;
       $('#chats').append(tweet);
@@ -125,6 +126,7 @@ var app = {
     } else if (!app.filterRooms || app.currRoom === 'All Messages') {
       if (message.username === app.currUser) {
         userSpan = ''; 
+        roomSpan = '';
       }
       //all info
       var tweet = totalMessage + roomSpan + userSpan + messageSpan + messageClose;
@@ -261,7 +263,14 @@ $(document).ready( function () {
   // });
   
   $(document).on('click', '#send', function(evt) {
-    console.log('clicked');
     app.handleSubmit();  
+  });
+  
+  $(document).on('keypress', '#message', function (evt) {
+    var key = evt.which;
+    if (key === 13) {
+      console.log('sent!');
+      app.handleSubmit();
+    }
   });
 });
