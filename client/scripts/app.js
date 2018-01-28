@@ -109,8 +109,8 @@ var app = {
     //     </div>`;
     //   $('#chats').append(tweet);
     var totalMessage = `<div class='${messageclasses}' data-messageid="${message.objectId}" data-roomname="${message.roomname}"  data-username="${_.escape(message.username)}">`;
-    var roomSpan = `<span class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}</span>`;
-    var userSpan = `<span class='username' data-username="${_.escape(message.username)}">@${_.escape(message.username)}: </span>`;
+    var roomSpan = `<span class='room' data-roomname="${_.escape(message.roomname)}">${_.escape(message.roomname)}  </span>`;
+    var userSpan = `<span class='username' data-username="${_.escape(message.username)}"><i class="fa fa-user" aria-hidden="true"></i> ${_.escape(message.username)}: </span>`;
     var messageSpan =`<div class='text'>${_.escape(message.text)}</div>`;
     var messageClose = `</div>`;
       
@@ -217,7 +217,7 @@ $(document).ready( function () {
   
   
   $('#textBox').append(`<input id="message" type="text" autofocus placeholder="Enter message...">
-  <button id="send" class="submit">GO!!!</button>`);
+  <button id="send" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>`);
 
   $('#currUser').append(' ', app.currUser);
   
@@ -226,9 +226,9 @@ $(document).ready( function () {
       <option id="createRoom">Create New Room</option>
       <option id="default" Selected>All Messages</option>
     </select>
-    <button id=roomSubmit>GO!</button>
+    <button id=roomSubmit><i class="fa fa-external-link-square" aria-hidden="true"></i></button>
     <input id="roomInputText" class="roomInput" placeholder="Enter Room Name">
-    <button id="roomInputButton" class="roomInput">GO!</button>`);
+    <button id="roomInputButton" class="roomInput"><i class="fa fa-external-link-square" aria-hidden="true"></i></button>`);
   
   $(document).on('click', '#roomSubmit', function (evt) {
     console.log('handled');
